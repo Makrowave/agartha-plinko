@@ -10,11 +10,6 @@ public abstract class AbstractCard implements Comparable<AbstractCard> {
     protected final CardSuit suit;
     protected final CardRank rank;
 
-    protected AbstractCard(CardSuit suit, CardRank rank) {
-        this.suit = suit;
-        this.rank = rank;
-    }
-
     public abstract int getValue();
 
     public abstract int getSuitValue();
