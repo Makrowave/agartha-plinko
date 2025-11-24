@@ -4,7 +4,7 @@ public enum CardSuit {
     HEARTS("H"), DIAMONDS("D"), CLUBS("C"), SPADES("S");
 
     private final String symbol;
-    CardSuit(String symbol) { this.symbol = symbol; }
+    Suit(String symbol) { this.symbol = symbol; }
 
     @Override
     public String toString() {
