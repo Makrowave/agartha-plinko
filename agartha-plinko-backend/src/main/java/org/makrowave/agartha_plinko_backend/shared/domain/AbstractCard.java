@@ -29,11 +29,6 @@ public abstract class AbstractCard implements Comparable<AbstractCard> {
     public String toString() {
         return suit.toString() + rank.toString();
     }
-
-
-    public static AbstractCard fromString(String str) {
-        throw new UnsupportedOperationException("Implement in subclass");
-    }
 }
 
 

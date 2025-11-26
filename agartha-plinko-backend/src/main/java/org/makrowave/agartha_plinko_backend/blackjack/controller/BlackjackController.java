@@ -33,6 +33,8 @@ public class BlackjackController {
             @PathVariable Long gameId,
             @AuthenticationPrincipal User player
     ) {
+        System.out.println(player.getUserId());
+
         BlackjackGameDto game = blackjackService.hit(player, gameId);
         return ResponseEntity.ok(game);
     }
