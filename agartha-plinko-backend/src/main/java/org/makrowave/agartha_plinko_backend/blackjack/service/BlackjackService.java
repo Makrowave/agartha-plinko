@@ -2,9 +2,9 @@ package org.makrowave.agartha_plinko_backend.blackjack.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.makrowave.agartha_plinko_backend.blackjack.IBlackjackGameRepository;
 import org.makrowave.agartha_plinko_backend.blackjack.domain.BlackjackCard;
 import org.makrowave.agartha_plinko_backend.blackjack.domain.BlackjackGameDto;
+import org.makrowave.agartha_plinko_backend.blackjack.repository.IBlackjackGameRepository;
 import org.makrowave.agartha_plinko_backend.shared.domain.AbstractCard;
 import org.makrowave.agartha_plinko_backend.shared.domain.CardRank;
 import org.makrowave.agartha_plinko_backend.shared.domain.CardSuit;
@@ -77,7 +77,10 @@ public class BlackjackService implements IBlackjackService {
         );
 
         AbstractCard drawn = drawCard(deck);
-        game.getPlayerCards().add(drawn.toString());
+
+        List<String> playerCards = new ArrayList<>(game.getPlayerCards());
+        playerCards.add(drawn.toString());
+        game.setPlayerCards(playerCards);
 
         int total = calculateHandValue(
                 CardUtil.stringsToCards(game.getPlayerCards(), BlackjackCard::fromString)
@@ -118,23 +121,23 @@ public class BlackjackService implements IBlackjackService {
                 CardUtil.stringsToCards(game.getDealerCards(), BlackjackCard::fromString)
         );
 
-        List<AbstractCard> dealerCards = CardUtil.stringsToCards(game.getDealerCards(),
-                BlackjackCard::fromString);
+        List<AbstractCard> dealerCards = new ArrayList<>(CardUtil.stringsToCards(game.getDealerCards(),
+                BlackjackCard::fromString));
 
-        List<AbstractCard> playerCards = CardUtil.stringsToCards(game.getPlayerCards(),
-                BlackjackCard::fromString);
+        List<AbstractCard> playerCards = new ArrayList<>(CardUtil.stringsToCards(game.getPlayerCards(),
+                BlackjackCard::fromString));
 
         int dealerTotal = calculateHandValue(dealerCards);
-
         int playerTotal = calculateHandValue(playerCards);
 
         while(dealerTotal < 17 || (dealerTotal == 17 && isSoft17(dealerCards))) {
-        AbstractCard card = drawCard(deck);
+            AbstractCard card = drawCard(deck);
             dealerCards.add(card);
             dealerTotal = calculateHandValue(dealerCards);
         }
 
-        game.setDealerCards(CardUtil.cardsToStrings(dealerCards));
+        // Create a new mutable ArrayList from the converted strings
+        game.setDealerCards(new ArrayList<>(CardUtil.cardsToStrings(dealerCards)));
 
         resolveGame(game, playerCards, dealerCards);
 

@@ -1,4 +1,4 @@
-package org.makrowave.agartha_plinko_backend.blackjack;
+package org.makrowave.agartha_plinko_backend.blackjack.repository;
 
 import org.makrowave.agartha_plinko_backend.shared.domain.model.BlackjackGame;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
-public class JwtService {
+public class JwtService implements IJwtService {
 
     private final byte[] key = "replace-with-min-32-char-secret-key".getBytes();
 

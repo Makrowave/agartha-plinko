@@ -17,9 +17,12 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
     private String username;
+
+    private String email;
 
     private String hash;
 

@@ -2,18 +2,22 @@ package org.makrowave.agartha_plinko_backend.authentication.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.makrowave.agartha_plinko_backend.authentication.domain.LoginDto;
+import org.makrowave.agartha_plinko_backend.authentication.domain.RegisterDto;
 import org.makrowave.agartha_plinko_backend.authentication.domain.TokenDto;
+import org.makrowave.agartha_plinko_backend.authentication.service.AuthService;
 import org.makrowave.agartha_plinko_backend.authentication.service.JwtService;
+import org.makrowave.agartha_plinko_backend.shared.domain.model.User;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthenticationManager manager;
+    private final AuthService authService;
     private final JwtService jwtService;
 
 
@@ -24,6 +28,13 @@ public class AuthController {
         );
 
         String token = jwtService.generateToken(req.username());
+        return new TokenDto(token);
+    }
+
+    @PostMapping("/register")
+    public TokenDto register(@RequestBody RegisterDto req) {
+        User user = authService.register(req.username(), req.email(), req.password());
+        String token = jwtService.generateToken(user.getUsername());
         return new TokenDto(token);
     }
 }
