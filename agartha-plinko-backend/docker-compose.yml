@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    container_name: agartha-postgres
+    environment:
+      POSTGRES_DB: agartha
+      POSTGRES_USER: agartha_user
+      POSTGRES_PASSWORD: agartha_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  app:
+    build: .
+    container_name: agartha-app
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/agartha
+      SPRING_DATASOURCE_USERNAME: agartha_user
+      SPRING_DATASOURCE_PASSWORD: agartha_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  pgdata:
