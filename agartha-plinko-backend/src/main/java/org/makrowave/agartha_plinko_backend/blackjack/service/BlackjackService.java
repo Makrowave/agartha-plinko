@@ -13,7 +13,9 @@ import org.makrowave.agartha_plinko_backend.shared.domain.model.BlackjackGame;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.User;
 import org.makrowave.agartha_plinko_backend.shared.util.CardUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -57,18 +59,18 @@ public class BlackjackService implements IBlackjackService {
     @Transactional
     public BlackjackGameDto hit(User player, Long gameId) {
         BlackjackGame game = blackjackGameRepository.findById(gameId)
-                .orElseThrow(() -> new RuntimeException("Game not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found"));
 
         if (!game.getPlayer().getUserId().equals(player.getUserId())) {
-            throw new RuntimeException("Forbidden");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden");
         }
 
         if (game.getStatus() != GameStatus.IN_PROGRESS) {
-            throw new RuntimeException("Game already finished");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game already finished");
         }
 
         if (game.isDidPlayerStand()) {
-            throw new RuntimeException("Player already stood");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Player already stood");
         }
 
         List<AbstractCard> deck = rebuildDeckExcluding(
@@ -100,18 +102,18 @@ public class BlackjackService implements IBlackjackService {
     @Transactional
     public BlackjackGameDto stand(User player, Long gameId) {
         BlackjackGame game = blackjackGameRepository.findById(gameId)
-                .orElseThrow(() -> new RuntimeException("Game not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found"));
 
         if (!game.getPlayer().getUserId().equals(player.getUserId())) {
-            throw new RuntimeException("Forbidden");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden");
         }
 
         if (game.getStatus() != GameStatus.IN_PROGRESS) {
-            throw new RuntimeException("Game already finished");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Game already finished");
         }
 
         if (game.isDidPlayerStand()) {
-            throw new RuntimeException("Player already stood");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Player already stood");
         }
 
         game.setDidPlayerStand(true);
