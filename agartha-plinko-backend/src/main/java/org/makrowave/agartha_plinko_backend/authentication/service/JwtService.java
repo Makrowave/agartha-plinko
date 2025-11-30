@@ -1,19 +1,30 @@
 package org.makrowave.agartha_plinko_backend.authentication.service;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService implements IJwtService {
 
-    private final byte[] key = "replace-with-min-32-char-secret-key".getBytes();
+    private final byte[] key;
+    private final long expirationMs;
+
+    public JwtService(
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.expiration-ms}") long expirationMs
+    ) {
+        if (secret.length() < 32) throw new IllegalArgumentException("Secret must be at least 32 chars");
+        this.key = secret.getBytes();
+        this.expirationMs = expirationMs;
+    }
 
     public String generateToken(String username) {
         Date now = new Date();
-        Date exp = new Date(now.getTime() + 1000 * 60 * 60);
+        Date exp = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
                 .setSubject(username)

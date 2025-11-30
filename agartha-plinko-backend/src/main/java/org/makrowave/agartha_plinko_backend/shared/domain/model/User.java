@@ -6,6 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Builder
@@ -27,6 +28,8 @@ public class User implements UserDetails {
     private String hash;
 
     private BigDecimal balance;
+
+    private Date lastDailyFundsRedeemed;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "billing_address_id", referencedColumnName = "id")

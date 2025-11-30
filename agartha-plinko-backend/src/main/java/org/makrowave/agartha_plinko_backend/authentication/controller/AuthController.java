@@ -6,7 +6,6 @@ import org.makrowave.agartha_plinko_backend.authentication.domain.RegisterDto;
 import org.makrowave.agartha_plinko_backend.authentication.domain.TokenDto;
 import org.makrowave.agartha_plinko_backend.authentication.service.AuthService;
 import org.makrowave.agartha_plinko_backend.authentication.service.JwtService;
-import org.makrowave.agartha_plinko_backend.shared.domain.model.User;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,6 @@ public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
 
-
     @PostMapping("/login")
     public TokenDto login(@RequestBody LoginDto req) {
         Authentication auth = manager.authenticate(
@@ -33,8 +31,17 @@ public class AuthController {
 
     @PostMapping("/register")
     public TokenDto register(@RequestBody RegisterDto req) {
-        User user = authService.register(req.username(), req.email(), req.password());
+        var user = authService.register(req.username(), req.email(), req.password());
         String token = jwtService.generateToken(user.getUsername());
         return new TokenDto(token);
+    }
+
+    @PostMapping("/change-password/{userId}")
+    public void changePassword(
+            @PathVariable Long userId,
+            @RequestParam String oldPassword,
+            @RequestParam String newPassword
+    ) {
+        authService.changePassword(userId, oldPassword, newPassword);
     }
 }
