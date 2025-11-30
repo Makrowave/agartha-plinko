@@ -6,10 +6,12 @@ import org.makrowave.agartha_plinko_backend.roulette.domain.RouletteBetRequest;
 import org.makrowave.agartha_plinko_backend.roulette.domain.RouletteGameDto;
 import org.makrowave.agartha_plinko_backend.roulette.repository.IRouletteGameRepository;
 import org.makrowave.agartha_plinko_backend.shared.domain.GameStatus;
+import org.makrowave.agartha_plinko_backend.shared.domain.GameType;
 import org.makrowave.agartha_plinko_backend.shared.domain.RouletteBetType;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.RouletteBet;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.RouletteGame;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.User;
+import org.makrowave.agartha_plinko_backend.wallet.service.IWalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,9 @@ public class RouletteService implements IRouletteService {
 
     @Autowired
     private final IRouletteGameRepository rouletteGameRepository;
+
+    @Autowired
+    private final IWalletService walletService;
 
     private static final Map<Integer, String> COLOR_MAP = new HashMap<>();
 
@@ -79,6 +84,13 @@ public class RouletteService implements IRouletteService {
         game.setTotalBetAmount(betReq.getBetAmount());
 
         rouletteGameRepository.save(game);
+
+        walletService.deductBet(
+            player.getUserId(),
+            betReq.getBetAmount(),
+            GameType.ROULETTE,
+            game.getId()
+        );
 
         return new RouletteGameDto(game);
     }
@@ -135,6 +147,13 @@ public class RouletteService implements IRouletteService {
         }
 
         rouletteGameRepository.save(game);
+
+        walletService.settleBet(
+            player.getUserId(),
+            totalWin,
+            GameType.ROULETTE,
+            game.getId()
+        );
 
         return new RouletteGameDto(game);
     }

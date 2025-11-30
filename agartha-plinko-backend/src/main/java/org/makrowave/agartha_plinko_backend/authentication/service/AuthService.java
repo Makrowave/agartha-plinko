@@ -28,7 +28,7 @@ public class AuthService implements IAuthService {
                 .username(username)
                 .email(email)
                 .hash(passwordEncoder.encode(rawPassword))
-                .balance(BigDecimal.ZERO)
+                .balance(BigDecimal.valueOf(100))
                 .build();
 
         return userRepository.save(user);
