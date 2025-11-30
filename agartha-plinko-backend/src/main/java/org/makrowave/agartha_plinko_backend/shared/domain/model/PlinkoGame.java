@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.makrowave.agartha_plinko_backend.plinko.domain.PlinkoRisk;
 import org.makrowave.agartha_plinko_backend.shared.domain.GameStatus;
+import org.makrowave.agartha_plinko_backend.shared.domain.PlinkoDirection;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -32,10 +33,11 @@ public class PlinkoGame {
     @Column(nullable = false)
     private PlinkoRisk riskLevel;
 
-    @ElementCollection
+    @ElementCollection(targetClass = PlinkoDirection.class)
     @CollectionTable(name = "plinko_game_path", joinColumns = @JoinColumn(name = "plinko_game_id"))
+    @Enumerated(EnumType.STRING)
     @Column(name = "direction")
-    private List<String> path; // "L" for Left, "R" for Right
+    private List<PlinkoDirection> path;
 
     @Column(nullable = false)
     private Integer destinationIndex;

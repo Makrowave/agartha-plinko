@@ -6,10 +6,15 @@ import org.makrowave.agartha_plinko_backend.plinko.domain.PlinkoGameDto;
 import org.makrowave.agartha_plinko_backend.plinko.domain.PlinkoRisk;
 import org.makrowave.agartha_plinko_backend.plinko.repository.IPlinkoGameRepository;
 import org.makrowave.agartha_plinko_backend.shared.domain.GameStatus;
+import org.makrowave.agartha_plinko_backend.shared.domain.GameType;
+import org.makrowave.agartha_plinko_backend.shared.domain.PlinkoDirection;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.PlinkoGame;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.User;
+import org.makrowave.agartha_plinko_backend.wallet.service.IWalletService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
@@ -23,32 +28,39 @@ public class PlinkoService implements IPlinkoService {
     @Autowired
     private final IPlinkoGameRepository plinkoGameRepository;
 
+    @Autowired
+    private final IWalletService walletService;
+
     private final SecureRandom random = new SecureRandom();
 
     @Override
     @Transactional
     public PlinkoGameDto play(User player, BigDecimal betAmount, Integer rows, PlinkoRisk risk) {
         if (rows < 8 || rows > 16) {
-            throw new IllegalArgumentException("Rows must be between 8 and 16");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rows must be between 8 and 16");
         }
 
-        List<String> path = new ArrayList<>();
+        if (betAmount == null || betAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid bet amount");
+        }
+
+        List<PlinkoDirection> path = new ArrayList<>();
         int rightTurns = 0;
 
         for (int i = 0; i < rows; i++) {
             boolean isRight = random.nextBoolean();
             if (isRight) {
-                path.add("R");
+                path.add(PlinkoDirection.RIGHT);
                 rightTurns++;
             } else {
-                path.add("L");
+                path.add(PlinkoDirection.LEFT);
             }
         }
 
         int destinationIndex = rightTurns;
-
         BigDecimal multiplier = calculateMultiplier(rows, risk, destinationIndex);
         BigDecimal resultAmount = betAmount.multiply(multiplier);
+
         GameStatus status = resultAmount.compareTo(betAmount) >= 0
                 ? GameStatus.WON
                 : GameStatus.LOST;
@@ -58,15 +70,29 @@ public class PlinkoService implements IPlinkoService {
                 .betAmount(betAmount)
                 .rowCount(rows)
                 .riskLevel(risk)
+                .status(status)
+                .playedAt(LocalDateTime.now())
                 .path(path)
                 .destinationIndex(destinationIndex)
                 .multiplier(multiplier)
                 .resultAmount(resultAmount)
-                .status(status)
-                .playedAt(LocalDateTime.now())
                 .build();
 
-        plinkoGameRepository.save(game);
+        game = plinkoGameRepository.save(game);
+
+        walletService.deductBet(
+                player.getUserId(),
+                betAmount,
+                GameType.PLINKO,
+                game.getId()
+        );
+
+        walletService.settleBet(
+                player.getUserId(),
+                resultAmount,
+                GameType.PLINKO,
+                game.getId()
+        );
 
         return new PlinkoGameDto(game);
     }

@@ -2,6 +2,7 @@ package org.makrowave.agartha_plinko_backend.plinko.domain;
 
 import lombok.Getter;
 import org.makrowave.agartha_plinko_backend.shared.domain.GameStatus;
+import org.makrowave.agartha_plinko_backend.shared.domain.PlinkoDirection;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.PlinkoGame;
 
 import java.math.BigDecimal;
@@ -15,8 +16,8 @@ public class PlinkoGameDto {
     private final Long userId;
     private final Integer rowCount;
     private final PlinkoRisk riskLevel;
-    private final List<String> path; // Represents the path taken (e.g., "L", "R")
-    private final Integer destinationIndex; // The final slot index (0 to rowCount)
+    private final List<PlinkoDirection> path;
+    private final Integer destinationIndex;
     private final BigDecimal multiplier;
     private final BigDecimal betAmount;
     private final BigDecimal resultAmount;
