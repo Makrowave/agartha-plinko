@@ -12,4 +12,10 @@ public interface IUserService extends UserDetailsService {
     void subtractUserBalance(BigDecimal value, Long userId);
 
     void addUserBalance(BigDecimal value, Long userId);
+
+    void redeemDailyBalance(Long userId, BigDecimal dailyAmount);
+
+    public void changeUsername(Long userId, String newUsername);
+
+    public void changeEmail(Long userId, String newEmail);
 }
