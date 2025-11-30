@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class AuthService implements IAuthService {
 
+    private static final int DEFAULT_BALANCE = 100;
+
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -28,7 +30,7 @@ public class AuthService implements IAuthService {
                 .username(username)
                 .email(email)
                 .hash(passwordEncoder.encode(rawPassword))
-                .balance(BigDecimal.valueOf(100))
+                .balance(BigDecimal.valueOf(DEFAULT_BALANCE))
                 .build();
 
         return userRepository.save(user);
