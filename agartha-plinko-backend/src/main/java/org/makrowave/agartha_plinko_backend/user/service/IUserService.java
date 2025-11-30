@@ -15,7 +15,7 @@ public interface IUserService extends UserDetailsService {
 
     void redeemDailyBalance(Long userId, BigDecimal dailyAmount);
 
-    public void changeUsername(Long userId, String newUsername);
+    void changeUsername(Long userId, String newUsername);
 
-    public void changeEmail(Long userId, String newEmail);
+    void changeEmail(Long userId, String newEmail);
 }

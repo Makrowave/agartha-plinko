@@ -1,5 +1,6 @@
 package org.makrowave.agartha_plinko_backend.user.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.makrowave.agartha_plinko_backend.shared.util.Validation;
 import org.makrowave.agartha_plinko_backend.user.repository.IUserRepository;
@@ -18,12 +19,14 @@ public class UserService implements IUserService {
     private final IUserRepository repo;
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) {
         return repo.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found"));
     }
 
     @Override
+    @Transactional
     public void subtractUserBalance(BigDecimal value, Long userId) {
         var user = repo.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -38,6 +41,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public void addUserBalance(BigDecimal value, Long userId) {
         var user = repo.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -47,6 +51,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public void redeemDailyBalance(Long userId, BigDecimal dailyAmount) {
         var user = repo.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -67,6 +72,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public void changeUsername(Long userId, String newUsername) {
         var exists = repo.findByUsername(newUsername);
         if (exists.isPresent()) {
@@ -81,6 +87,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public void changeEmail(Long userId, String newEmail) {
         if (!Validation.EMAIL_REGEX.matcher(newEmail).matches()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");

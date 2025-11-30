@@ -1,5 +1,6 @@
 package org.makrowave.agartha_plinko_backend.authentication.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.User;
 import org.makrowave.agartha_plinko_backend.shared.util.Validation;
@@ -19,6 +20,7 @@ public class AuthService implements IAuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
     public User register(String username, String email, String rawPassword) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already exists");
@@ -43,6 +45,7 @@ public class AuthService implements IAuthService {
     }
 
     @Override
+    @Transactional
     public void changePassword(Long userId, String oldPassword, String newPassword) {
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
