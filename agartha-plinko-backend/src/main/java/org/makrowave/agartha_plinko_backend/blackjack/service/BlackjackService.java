@@ -5,13 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.makrowave.agartha_plinko_backend.blackjack.domain.BlackjackCard;
 import org.makrowave.agartha_plinko_backend.blackjack.domain.BlackjackGameDto;
 import org.makrowave.agartha_plinko_backend.blackjack.repository.IBlackjackGameRepository;
-import org.makrowave.agartha_plinko_backend.shared.domain.AbstractCard;
-import org.makrowave.agartha_plinko_backend.shared.domain.CardRank;
-import org.makrowave.agartha_plinko_backend.shared.domain.CardSuit;
-import org.makrowave.agartha_plinko_backend.shared.domain.GameStatus;
+import org.makrowave.agartha_plinko_backend.shared.domain.*;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.BlackjackGame;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.User;
 import org.makrowave.agartha_plinko_backend.shared.util.CardUtil;
+import org.makrowave.agartha_plinko_backend.wallet.service.IWalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,6 +25,10 @@ public class BlackjackService implements IBlackjackService {
 
     @Autowired
     private final IBlackjackGameRepository blackjackGameRepository;
+
+    @Autowired
+    private final IWalletService walletService;
+
     private final BigDecimal VICTORY_MULTIPLIER = BigDecimal.valueOf(2);
 
     @Transactional
@@ -52,6 +54,13 @@ public class BlackjackService implements IBlackjackService {
                 .build();
 
         blackjackGameRepository.save(game);
+
+        walletService.deductBet(
+                player.getUserId(),
+                betAmount,
+                GameType.BLACKJACK,
+                game.getId()
+        );
 
         return new BlackjackGameDto(game);
     }
@@ -92,6 +101,13 @@ public class BlackjackService implements IBlackjackService {
             game.setDidPlayerStand(true);
             game.setStatus(GameStatus.LOST);
             game.setResultAmount(BigDecimal.ZERO);
+
+            walletService.settleBet(
+                    player.getUserId(),
+                    game.getResultAmount(),
+                    GameType.BLACKJACK,
+                    game.getId()
+            );
         }
 
         blackjackGameRepository.save(game);
@@ -173,6 +189,13 @@ public class BlackjackService implements IBlackjackService {
             game.setStatus(GameStatus.DRAW);
             game.setResultAmount(game.getBetAmount());
         }
+
+        walletService.settleBet(
+                game.getPlayer().getUserId(),
+                game.getResultAmount(),
+                GameType.BLACKJACK,
+                game.getId()
+        );
 
         blackjackGameRepository.save(game);
     }
