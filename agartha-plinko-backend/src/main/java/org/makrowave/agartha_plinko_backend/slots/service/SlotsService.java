@@ -3,11 +3,14 @@ package org.makrowave.agartha_plinko_backend.slots.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.makrowave.agartha_plinko_backend.shared.domain.GameStatus;
+import org.makrowave.agartha_plinko_backend.shared.domain.GameType;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.SlotsGame;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.User;
 import org.makrowave.agartha_plinko_backend.slots.domain.SlotSymbol;
 import org.makrowave.agartha_plinko_backend.slots.domain.SlotsGameDto;
 import org.makrowave.agartha_plinko_backend.slots.repository.ISlotsGameRepository;
+import org.makrowave.agartha_plinko_backend.wallet.service.IWalletService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,7 +23,12 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class SlotsService implements ISlotsService {
 
+    @Autowired
     private final ISlotsGameRepository slotsGameRepository;
+
+    @Autowired
+    private final IWalletService walletService;
+
     private final Random random = new Random();
 
     private final int COLS = 3;
@@ -47,6 +55,20 @@ public class SlotsService implements ISlotsService {
                 .build();
 
         slotsGameRepository.save(game);
+
+        walletService.deductBet(
+                player.getUserId(),
+                betAmount,
+                GameType.SLOTS,
+                game.getId()
+        );
+
+        walletService.settleBet(
+                player.getUserId(),
+                winAmount,
+                GameType.SLOTS,
+                game.getId()
+        );
 
         return new SlotsGameDto(game);
     }
