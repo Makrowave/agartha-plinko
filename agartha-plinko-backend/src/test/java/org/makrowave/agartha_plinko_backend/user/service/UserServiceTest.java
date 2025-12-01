@@ -2,6 +2,8 @@ package org.makrowave.agartha_plinko_backend.user.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.makrowave.agartha_plinko_backend.BaseTest;
 import org.makrowave.agartha_plinko_backend.user.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,10 +16,8 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
 @Transactional
-class UserServiceTest {
+class UserServiceTest extends BaseTest {
 
     @Autowired
     private IUserService userService;

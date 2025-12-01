@@ -2,17 +2,16 @@ package org.makrowave.agartha_plinko_backend.blackjack.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.makrowave.agartha_plinko_backend.blackjack.domain.BlackjackCard;
+import org.makrowave.agartha_plinko_backend.BaseTest;
 import org.makrowave.agartha_plinko_backend.blackjack.repository.IBlackjackGameRepository;
-import org.makrowave.agartha_plinko_backend.shared.domain.AbstractCard;
 import org.makrowave.agartha_plinko_backend.shared.domain.GameStatus;
+import org.makrowave.agartha_plinko_backend.shared.domain.GameType;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.BlackjackGame;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.User;
-import org.makrowave.agartha_plinko_backend.shared.util.CardUtil;
 import org.makrowave.agartha_plinko_backend.user.repository.IUserRepository;
+import org.makrowave.agartha_plinko_backend.wallet.service.IWalletService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -23,10 +22,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@SpringBootTest
-@ActiveProfiles("test")
 @Transactional
-public class BlackjackServiceTest {
+public class BlackjackServiceTest extends BaseTest {
     @Autowired
     private BlackjackService blackjackService;
 
@@ -36,11 +33,16 @@ public class BlackjackServiceTest {
     @Autowired
     private IUserRepository userRepository;
 
+    @MockitoBean
+    private IWalletService walletService;
+
     private Long userId;
 
     @Transactional
     protected Long createGame(List<String> playerCards, List<String> dealerCards) {
         var user = getUser();
+
+        var betAmount = BigDecimal.valueOf(100);
 
         var game = BlackjackGame.builder()
                 .player(user)
@@ -48,9 +50,16 @@ public class BlackjackServiceTest {
                 .dealerCards(dealerCards)
                 .playedAt(LocalDateTime.now())
                 .status(GameStatus.IN_PROGRESS)
-                .betAmount(BigDecimal.valueOf(100))
+                .betAmount(betAmount)
                 .didPlayerStand(false)
                 .build();
+
+        walletService.deductBet(
+                user.getUserId(),
+                betAmount,
+                GameType.BLACKJACK,
+                game.getId()
+        );
 
         blackjackGameRepository.save(game);
 

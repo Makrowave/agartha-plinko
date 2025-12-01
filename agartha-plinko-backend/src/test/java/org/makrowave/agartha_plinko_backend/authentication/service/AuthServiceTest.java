@@ -2,6 +2,7 @@ package org.makrowave.agartha_plinko_backend.authentication.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.makrowave.agartha_plinko_backend.BaseTest;
 import org.makrowave.agartha_plinko_backend.shared.domain.model.User;
 import org.makrowave.agartha_plinko_backend.user.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class AuthServiceTest {
+class AuthServiceTest extends BaseTest {
 
     @Autowired
     private AuthService authService;
