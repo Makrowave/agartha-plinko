@@ -2,10 +2,11 @@ package org.makrowave.agartha_plinko_backend.authentication.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.makrowave.agartha_plinko_backend.BaseTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class JwtServiceTest {
+class JwtServiceTest extends BaseTest {
 
     private JwtService jwtService;
     private final String secret = "01234567890123456789012345678901";

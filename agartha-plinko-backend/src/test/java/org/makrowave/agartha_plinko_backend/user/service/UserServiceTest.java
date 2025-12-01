@@ -2,22 +2,19 @@ package org.makrowave.agartha_plinko_backend.user.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.makrowave.agartha_plinko_backend.BaseTest;
 import org.makrowave.agartha_plinko_backend.user.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
-@ActiveProfiles("test")
 @Transactional
-class UserServiceTest {
+class UserServiceTest extends BaseTest {
 
     @Autowired
     private IUserService userService;
