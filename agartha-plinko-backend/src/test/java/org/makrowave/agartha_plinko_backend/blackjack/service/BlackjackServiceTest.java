@@ -365,13 +365,14 @@ public class BlackjackServiceTest extends BaseTest {
     void givenMultipleHits_whenNoDuplicateCards_thenSuccess() {
         var gameId = createGame(List.of("H2"), List.of("S7"));
 
-        // Hit multiple times
-        blackjackService.hit(user, gameId);
-        blackjackService.hit(user, gameId);
-        var gameDto = blackjackService.hit(user, gameId);
+        var game = blackjackService.hit(user, gameId);
+
+        while(game.getStatus() == GameStatus.IN_PROGRESS) {
+            game = blackjackService.hit(user, gameId);
+        }
 
         // Verify no duplicate cards in player hand
-        var cards = gameDto.getPlayerCards();
+        var cards = game.getPlayerCards();
         assertEquals(cards.size(), cards.stream().distinct().count());
     }
 

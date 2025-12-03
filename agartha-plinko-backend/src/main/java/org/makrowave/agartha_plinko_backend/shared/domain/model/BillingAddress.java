@@ -25,6 +25,8 @@ public class BillingAddress {
 
     private String country;
 
+    private Long userId;
+
     @OneToOne(mappedBy = "billingAddress")
     private User user;
 }

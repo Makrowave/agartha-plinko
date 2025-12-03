@@ -1,5 +1,6 @@
 package org.makrowave.agartha_plinko_backend.authentication.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.makrowave.agartha_plinko_backend.authentication.domain.LoginDto;
 import org.makrowave.agartha_plinko_backend.authentication.domain.RegisterDto;
@@ -30,7 +31,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public TokenDto register(@RequestBody RegisterDto req) {
+    public TokenDto register(@Valid @RequestBody RegisterDto req) {
         var user = authService.register(req.username(), req.email(), req.password());
         String token = jwtService.generateToken(user.getUsername());
         return new TokenDto(token);
