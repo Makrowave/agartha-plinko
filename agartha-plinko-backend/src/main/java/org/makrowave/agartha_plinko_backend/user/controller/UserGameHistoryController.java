@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/history")
-@RequiredArgsConstructor
 public class UserGameHistoryController {
 
     private final IUserGameHistoryRepository gameHistoryRepository;
+
+    public UserGameHistoryController(IUserGameHistoryRepository gameHistoryRepository) {
+        this.gameHistoryRepository = gameHistoryRepository;
+    }
 
     @GetMapping("/games")
     public Page<UserGameHistoryDto> getGameHistory(

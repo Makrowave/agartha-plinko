@@ -26,5 +26,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(500).body(error);
     }
 
-    public record ErrorResponse(int status, String message) {}
+    public record ErrorResponse(int status, String message) {
+    }
 }

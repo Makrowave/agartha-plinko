@@ -37,7 +37,7 @@ public class RouletteService implements IRouletteService {
         COLOR_MAP.put(0, "GREEN");
 
         List<Integer> reds = Arrays.asList(
-                1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36
+                1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36
         );
 
         for (int i = 1; i <= 36; i++) {
@@ -86,10 +86,10 @@ public class RouletteService implements IRouletteService {
         rouletteGameRepository.save(game);
 
         walletService.deductBet(
-            player.getUserId(),
-            betReq.getBetAmount(),
-            GameType.ROULETTE,
-            game.getId()
+                player.getUserId(),
+                betReq.getBetAmount(),
+                GameType.ROULETTE,
+                game.getId()
         );
 
         return new RouletteGameDto(game);
@@ -149,10 +149,10 @@ public class RouletteService implements IRouletteService {
         rouletteGameRepository.save(game);
 
         walletService.settleBet(
-            player.getUserId(),
-            totalWin,
-            GameType.ROULETTE,
-            game.getId()
+                player.getUserId(),
+                totalWin,
+                GameType.ROULETTE,
+                game.getId()
         );
 
         return new RouletteGameDto(game);

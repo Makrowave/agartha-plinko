@@ -107,9 +107,10 @@ public class SlotsService implements ISlotsService {
 
     /**
      * Checks if a line consists of identical symbols.
-     * @param grid The flattened grid.
+     *
+     * @param grid       The flattened grid.
      * @param startIndex The index to start checking.
-     * @param step The step to get to the next cell in the line.
+     * @param step       The step to get to the next cell in the line.
      */
     private boolean checkLine(List<SlotSymbol> grid, int startIndex, int step) {
         SlotSymbol first = grid.get(startIndex);

@@ -367,7 +367,7 @@ public class BlackjackServiceTest extends BaseTest {
 
         var game = blackjackService.hit(user, gameId);
 
-        while(game.getStatus() == GameStatus.IN_PROGRESS) {
+        while (game.getStatus() == GameStatus.IN_PROGRESS) {
             game = blackjackService.hit(user, gameId);
         }
 

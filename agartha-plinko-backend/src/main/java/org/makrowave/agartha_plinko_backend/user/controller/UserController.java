@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/user")
 public class UserController {
 
     private final IUserService userService;
     private final BigDecimal dailyAmount = new BigDecimal("5.0");
+
+    public UserController(IUserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/{userId}/redeem-daily")
     public ResponseEntity<Void> redeemDaily(@PathVariable Long userId) {

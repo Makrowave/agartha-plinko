@@ -8,19 +8,11 @@ import org.springframework.lang.NonNull;
 public abstract class AbstractCard implements Comparable<AbstractCard> {
 
     protected final CardSuit suit;
+
+    @Getter
     protected final CardRank rank;
 
     public abstract int getValue();
-
-    public abstract int getSuitValue();
-
-    public CardRank getRank() {
-        return rank;
-    }
-
-    public CardSuit getSuit() {
-        return suit;
-    }
 
     @Override
     public abstract int compareTo(@NonNull AbstractCard other);

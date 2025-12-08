@@ -148,7 +148,7 @@ public class BlackjackService implements IBlackjackService {
         int dealerTotal = calculateHandValue(dealerCards);
         int playerTotal = calculateHandValue(playerCards);
 
-        while(dealerTotal < 17 || (dealerTotal == 17 && isSoft17(dealerCards))) {
+        while (dealerTotal < 17 || (dealerTotal == 17 && isSoft17(dealerCards))) {
             AbstractCard card = drawCard(deck);
             dealerCards.add(card);
             dealerTotal = calculateHandValue(dealerCards);
@@ -232,7 +232,7 @@ public class BlackjackService implements IBlackjackService {
     }
 
     private List<AbstractCard> rebuildDeckExcluding(List<AbstractCard> playerCards,
-                                                     List<AbstractCard> dealerCards) {
+                                                    List<AbstractCard> dealerCards) {
         List<AbstractCard> deck = createDeck();
 
         Set<String> used = new HashSet<>();

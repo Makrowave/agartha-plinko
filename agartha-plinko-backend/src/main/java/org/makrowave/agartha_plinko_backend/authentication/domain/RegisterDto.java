@@ -6,4 +6,5 @@ public record RegisterDto(
         @NotBlank String username,
         @NotBlank String email,
         @NotBlank String password
-) {}
+) {
+}
